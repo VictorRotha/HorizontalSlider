@@ -25,13 +25,12 @@ public class DemoActivity extends AppCompatActivity implements HorizontalSlider.
 
         HorizontalSlider horizontalSlider = findViewById(R.id.slider);
         horizontalSlider.setData(data);
-        horizontalSlider.setPosition(2);
         horizontalSlider.setSnapListener(this);
-        
+        horizontalSlider.setAnimMillisPerInch(300);
+        horizontalSlider.setPosition(2);
         tvOne = findViewById(R.id.tv_one);
 
     }
-
 
     private List<String> getTestData() {
         return Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");

@@ -25,6 +25,7 @@ public class HorizontalSlider extends ConstraintLayout {
     private SnapListener snapListener;
 
     private int snapPosition = 1;
+    private float animMillisPerInch = -1;
 
     public interface SnapListener {
         void onSnapChanged(int idx);
@@ -95,8 +96,12 @@ public class HorizontalSlider extends ConstraintLayout {
         });
     }
 
-    private void scrollToPosition(int pos) {
-        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(getContext());
+    private  void scrollToPosition(int pos) {
+        scrollToPosition(pos, false);
+    }
+
+    private void scrollToPosition(int pos, boolean fast) {
+        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(getContext(), (fast) ? 1 : animMillisPerInch);
         smoothScroller.setTargetPosition(pos);
         layoutManager.startSmoothScroll(smoothScroller);
 
@@ -118,8 +123,7 @@ public class HorizontalSlider extends ConstraintLayout {
             pos = 1;
         }
 
-        scrollToPosition(pos);
-
+        scrollToPosition(pos, true);
 
     }
 
@@ -127,7 +131,7 @@ public class HorizontalSlider extends ConstraintLayout {
         this.snapListener = snapListener;
     }
 
-
-
-
+    public void setAnimMillisPerInch(float animMillisPerInch) {
+        this.animMillisPerInch = animMillisPerInch;
+    }
 }
