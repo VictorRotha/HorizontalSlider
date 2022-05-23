@@ -1,5 +1,6 @@
 package de.victor.horizontalslider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,9 @@ import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
 
+    private static final String LOGTAG = "Adapter";
     private List<String> data = new ArrayList<>();
+    private int selectedPos = RecyclerView.NO_POSITION;
 
 
     @NonNull
@@ -36,7 +39,29 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
     }
 
     public void setData(List<String> data) {
-        this.data = data;
+        ArrayList<String> a = new ArrayList<>();
+        a.add("");
+        a.addAll(data);
+        a.add("");
+        this.data = a;
+    }
+
+    public int getSelectedPos() {
+        return selectedPos;
+    }
+
+    public void setSelectedPos(int selectedPos) {
+        this.selectedPos = selectedPos;
+    }
+
+    public void decrementSelectedPosition() {
+        if (selectedPos > 1)
+            selectedPos--;
+    }
+
+    public void incrementSelectedPos() {
+        if (selectedPos < data.size()-2)
+            selectedPos++;
     }
 
     public static class AdapterViewHolder extends RecyclerView.ViewHolder {

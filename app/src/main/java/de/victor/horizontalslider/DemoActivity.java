@@ -1,7 +1,6 @@
 package de.victor.horizontalslider;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
 
@@ -19,11 +18,9 @@ public class DemoActivity extends AppCompatActivity {
 
         HorizontalSlider horizontalSlider = findViewById(R.id.slider);
         horizontalSlider.setData(getTestData());
-
+        horizontalSlider.setPosition(2);
 
     }
-
-
 
 
     private List<String> getTestData() {
