@@ -17,7 +17,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
 
     private static final String LOGTAG = "Adapter";
     private List<String> data = new ArrayList<>();
-    private int selectedPos = RecyclerView.NO_POSITION;
 
 
     @NonNull
@@ -46,23 +45,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.AdapterViewHolder> {
         this.data = a;
     }
 
-    public int getSelectedPos() {
-        return selectedPos;
-    }
-
-    public void setSelectedPos(int selectedPos) {
-        this.selectedPos = selectedPos;
-    }
-
-    public void decrementSelectedPosition() {
-        if (selectedPos > 1)
-            selectedPos--;
-    }
-
-    public void incrementSelectedPos() {
-        if (selectedPos < data.size()-2)
-            selectedPos++;
-    }
 
     public static class AdapterViewHolder extends RecyclerView.ViewHolder {
 

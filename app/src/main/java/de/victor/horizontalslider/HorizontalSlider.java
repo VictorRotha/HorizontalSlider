@@ -19,12 +19,16 @@ import java.util.List;
 public class HorizontalSlider extends ConstraintLayout {
 
     private static final String LOGTAG = "HorizontalSlider";
+
     private LinearLayoutManager layoutManager;
     private Adapter adapter;
-    private RecyclerView rcView;
-    private CustomSmoothScroller smoothScroller;
+    private SnapListener snapListener;
 
-    private int startPosition = 1;
+    private int snapPosition = 1;
+
+    public interface SnapListener {
+        void onSnapChanged(int idx);
+    }
 
     public HorizontalSlider(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -36,14 +40,14 @@ public class HorizontalSlider extends ConstraintLayout {
 
         View buttonLeft = getChildAt(0);
         buttonLeft.setOnClickListener(v -> {
-            adapter.decrementSelectedPosition();
-            scrollToPosition(adapter.getSelectedPos());
+            if (snapPosition > 1)
+                scrollToPosition(snapPosition - 1);
         });
 
         View buttonRight = getChildAt(1);
         buttonRight.setOnClickListener(v -> {
-            adapter.incrementSelectedPos();
-            scrollToPosition(adapter.getSelectedPos());
+            if (snapPosition < adapter.getItemCount()-2)
+                scrollToPosition(snapPosition + 1);
         });
 
 
@@ -54,13 +58,48 @@ public class HorizontalSlider extends ConstraintLayout {
         layoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
         adapter = new Adapter();
 
-        rcView = findViewById(R.id.rc_view);
+        RecyclerView rcView = findViewById(R.id.rc_view);
 
         rcView.setLayoutManager(layoutManager);
         rcView.setAdapter(adapter);
 
         LinearSnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(rcView);
+
+        rcView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                View view;
+                int snapPos;
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && (view = snapHelper.findSnapView(layoutManager)) != null
+                        && ((snapPos = layoutManager.getPosition(view)) != snapPosition)) {
+
+                            if (snapPos < 1) {
+                                scrollToPosition(1);
+                                return;
+                            }
+                            if (snapPos > adapter.getItemCount() - 2) {
+                                scrollToPosition(adapter.getItemCount() - 2);
+                                return;
+                            }
+                            snapPosition = snapPos;
+
+                            if (snapListener != null) {
+                                snapListener.onSnapChanged(snapPos - 1);
+                            }
+                }
+            }
+        });
+    }
+
+    private void scrollToPosition(int pos) {
+        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(getContext());
+        smoothScroller.setTargetPosition(pos);
+        layoutManager.startSmoothScroll(smoothScroller);
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -79,19 +118,16 @@ public class HorizontalSlider extends ConstraintLayout {
             pos = 1;
         }
 
-        adapter.setSelectedPos(pos);
         scrollToPosition(pos);
 
 
     }
 
-
-    public void scrollToPosition(int pos) {
-        smoothScroller = new CustomSmoothScroller(getContext());
-        smoothScroller.setTargetPosition(pos);
-        layoutManager.startSmoothScroll(smoothScroller);
-
+    public void setSnapListener(SnapListener snapListener) {
+        this.snapListener = snapListener;
     }
+
+
 
 
 }
